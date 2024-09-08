@@ -1,0 +1,7 @@
+{
+    "UPLOAD_FOLDER": "uploads/",
+    "MAX_CONTENT_LENGTH": 16777216,
+    "SECRET_KEY": "supersecretkey",
+    "ALLOWED_EXTENSIONS": ["jpg", "jpeg", "png"]
+  }
+  

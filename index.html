@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to Text Conversion</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            color: #333;
+        }
+
+        header {
+            background-color: #fff;
+            padding: 1em;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            color: #333;
+        }
+
+        .hero {
+            background: url('hero-background.jpg') no-repeat center center/cover;
+            padding: 2em;
+            margin: 1em;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            color: #fff;
+        }
+
+        .hero h2 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        .hero p {
+            font-size: 1.1em;
+        }
+
+        main {
+            padding: 2em;
+        }
+
+        .upload-section {
+            background: #fff;
+            padding: 2em;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2em;
+            text-align: center;
+        }
+
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-upload label {
+            display: inline-block;
+            padding: 1em 2em;
+            background-color: #333;
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .file-upload label:hover {
+            background-color: #555;
+            transform: scale(1.05);
+        }
+
+        .submit-button {
+            display: block;
+            width: 100%;
+            padding: 1em;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            font-size: 1em;
+            margin-top: 1em;
+        }
+
+        .submit-button:hover {
+            background-color: #555;
+            transform: scale(1.05);
+        }
+
+        .result-section {
+            background: #fff;
+            padding: 2em;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .result-box {
+            padding: 1em;
+            border-radius: 12px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            margin-bottom: 1em;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .result-box h2 {
+            font-size: 1.5em;
+            margin-bottom: 0.5em;
+        }
+
+        .result-box p {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .result-box img {
+            margin-top: 1em;
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .result-box img:hover {
+            transform: scale(1.1);
+        }
+
+        .download-button, .speak-button {
+            display: block;
+            width: 100%;
+            padding: 1em;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin-top: 1em;
+        }
+
+        .download-button:hover, .speak-button:hover {
+            background-color: #555;
+            transform: scale(1.05);
+        }
+
+        .feedback-section {
+            background: #fff;
+            padding: 2em;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            margin-top: 2em;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback-section h2 {
+            margin: 0 0 1em;
+        }
+
+        .feedback-section textarea {
+            width: 100%;
+            padding: 1em;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feedback-section textarea:focus {
+            outline: none;
+            border: 2px solid #ff7e5f;
+            box-shadow: 0 0 5px rgba(255, 126, 95, 0.5);
+        }
+
+        .feedback-section input[type="submit"] {
+            margin-top: 1em;
+        }
+
+        /* Loading spinner styles */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            display: none;
+        }
+
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #333;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Custom scrollbar styles */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Image to Text Conversion</h1>
+    </header>
+    <div class="hero">
+        <h2>Transform Your Images into Text Instantly!</h2>
+        <p>Upload an image to get a descriptive caption generated using advanced AI technology.</p>
+    </div>
+    <main>
+        <section class="upload-section">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="file-upload">
+                    <input type="file" name="image" accept="image/*" id="imageUpload" multiple>
+                    <label for="imageUpload">Choose images</label>
+                    <img id="imagePreview" src="" alt="Image Preview" style="display: none;">
+                </div>
+                <input type="submit" value="Upload" class="submit-button">
+            </form>
+        </section>
+
+        <section class="result-section">
+            {% if caption and image_url %}
+                <div class="result-box">
+                    <h2>Image Caption:</h2>
+                    <p>{{ caption }}</p>
+                    <img src="{{ image_url }}" alt="Uploaded Image">
+                    <a href="/download_caption?caption={{ caption }}" class="download-button">Download Caption</a>
+                    <button class="speak-button" onclick="speakCaption('{{ caption }}')">Speak Caption</button>
+                </div>
+            {% endif %}
+        </section>
+
+        <section class="feedback-section">
+            <h2>Submit Your Feedback</h2>
+            <form method="POST" action="/submit_feedback">
+                <textarea name="feedback" rows="4" placeholder="Your feedback..."></textarea>
+                <input type="submit" value="Submit Feedback" class="submit-button">
+            </form>
+        </section>
+    </main>
+
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        function speakCaption(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            speechSynthesis.speak(utterance);
+        }
+
+        document.querySelector('#imageUpload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.querySelector('#imagePreview');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Example of showing and hiding the loader
+        document.querySelector('form').addEventListener('submit', function() {
+            document.getElementById('loader').style.display = 'flex';
+        });
+    </script>
+</body>
+</html>
